@@ -1,4 +1,5 @@
 class Api::PostsController < ApplicationController
+  skip_before_action :verify_authenticity_token
   before_action :set_post, only: %i[show]
 
   def index
@@ -10,9 +11,22 @@ class Api::PostsController < ApplicationController
     render json: @post
   end
 
+  def create
+    post = Post.new(post_params)
+    if post.save
+      render json: post, status: :created
+    else
+      render json: post.errors, status: :unprocessable_entity
+    end
+  end
+
   private
 
   def set_post
     @post = Post.get_post(params[:id])
+  end
+
+  def post_params
+    params.permit(:title, :content)
   end
 end
