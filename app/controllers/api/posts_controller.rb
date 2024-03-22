@@ -1,6 +1,6 @@
 class Api::PostsController < ApplicationController
   skip_before_action :verify_authenticity_token
-  before_action :set_post, only: %i[show update]
+  before_action :set_post, only: %i[show update destroy]
 
   def index
     posts = Post.get_posts
@@ -26,6 +26,11 @@ class Api::PostsController < ApplicationController
     else
       render json: @post.errors, status: :unprocessable_entity
     end
+  end
+
+  def destroy
+    @post.destroy
+    render json: { message: "投稿を削除しました" }, status: :ok
   end
 
   private
